@@ -85,7 +85,7 @@ export function TaskCard({ task, onClick, onDelete }: TaskCardProps) {
 
   return (
     <div
-      className="group rounded-lg border border-orange-900/20 bg-[#1E1814]/80 hover:border-ember/30 hover:bg-[#1E1814] transition-all duration-150 cursor-pointer relative"
+      className="group rounded-lg border border-zinc-800 bg-zinc-900/80 hover:border-zinc-700 hover:bg-zinc-900 transition-all duration-150 cursor-pointer relative"
       onClick={() => onClick?.(task)}
       onMouseEnter={() => setShowDelete(true)}
       onMouseLeave={() => setShowDelete(false)}
@@ -106,7 +106,7 @@ export function TaskCard({ task, onClick, onDelete }: TaskCardProps) {
       <div className="p-3.5">
         {/* Header */}
         <div className="flex items-start justify-between gap-2 mb-2">
-          <h4 className="text-sm font-medium text-orange-50 leading-snug line-clamp-2">
+          <h4 className="text-sm font-medium text-zinc-200 leading-snug line-clamp-2">
             {task.title}
           </h4>
           {task.assignee && (
@@ -117,14 +117,14 @@ export function TaskCard({ task, onClick, onDelete }: TaskCardProps) {
         </div>
 
         {/* Description preview */}
-        <p className="text-xs text-orange-200/40 line-clamp-2 mb-3">{task.description}</p>
+        <p className="text-xs text-zinc-500 line-clamp-2 mb-3">{task.description}</p>
 
         {/* Footer: priority + tags + date */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-1.5 flex-wrap">
             <div className="flex items-center gap-1">
               <span className={`h-1.5 w-1.5 rounded-full ${prio.dot}`} />
-              <span className="text-[10px] text-orange-200/40 uppercase tracking-wider font-medium">
+              <span className="text-[10px] text-zinc-500 uppercase tracking-wider font-medium">
                 {task.priority}
               </span>
             </div>
@@ -134,7 +134,7 @@ export function TaskCard({ task, onClick, onDelete }: TaskCardProps) {
               </Badge>
             ))}
           </div>
-          <span className="text-[10px] text-orange-900/50 tabular-nums">{formatDate(task.updatedAt)}</span>
+          <span className="text-[10px] text-zinc-600 tabular-nums">{formatDate(task.updatedAt)}</span>
         </div>
 
         {/* Process Task button — visible on hover */}
@@ -143,7 +143,7 @@ export function TaskCard({ task, onClick, onDelete }: TaskCardProps) {
             <Button
               size="sm"
               variant="outline"
-              className="w-full text-xs h-7 border-orange-900/30 hover:bg-ember/10 hover:text-ember hover:border-ember/30"
+              className="w-full text-xs h-7 border-zinc-700 hover:bg-emerald-500/10 hover:text-emerald-400 hover:border-emerald-500/30"
               onClick={handleProcessTask}
               disabled={processing}
             >

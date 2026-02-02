@@ -42,8 +42,8 @@ export default function Dashboard() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h1 className="text-xl sm:text-2xl font-bold tracking-tight"><span className="text-ember">Mission</span> <span className="text-orange-50">Control</span></h1>
-          <p className="text-xs sm:text-sm text-orange-200/40 mt-1">
+          <h1 className="text-xl sm:text-2xl font-bold text-zinc-100 tracking-tight">Mission Control</h1>
+          <p className="text-xs sm:text-sm text-zinc-500 mt-1">
             {activeAgents} agent{activeAgents !== 1 ? "s" : ""} active · {totalTasks} task{totalTasks !== 1 ? "s" : ""} tracked
           </p>
         </div>
@@ -59,7 +59,7 @@ export default function Dashboard() {
           <Button
             size="sm"
             onClick={() => setShowCreateTask(true)}
-            className="gap-1.5 bg-ember hover:bg-ember-glow text-white"
+            className="gap-1.5 bg-emerald-600 hover:bg-emerald-700"
           >
             <Plus className="h-3.5 w-3.5" /> Task
           </Button>
@@ -68,7 +68,7 @@ export default function Dashboard() {
 
       {/* Agent Cards */}
       <section>
-        <h2 className="text-sm font-semibold text-ember/70 uppercase tracking-wider mb-3">Agents</h2>
+        <h2 className="text-sm font-semibold text-zinc-400 uppercase tracking-wider mb-3">Agents</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
           {agents?.map((agent) => (
             <AgentCard
@@ -87,7 +87,7 @@ export default function Dashboard() {
 
       {/* Task Board */}
       <section>
-        <h2 className="text-sm font-semibold text-ember/70 uppercase tracking-wider mb-3">Task Board</h2>
+        <h2 className="text-sm font-semibold text-zinc-400 uppercase tracking-wider mb-3">Task Board</h2>
         {tasksByStatus ? (
           <TaskBoard
             tasksByStatus={tasksByStatus}

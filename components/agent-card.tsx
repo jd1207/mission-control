@@ -21,9 +21,9 @@ interface AgentCardProps {
 }
 
 const statusStyles: Record<string, { dot: string; badge: string; label: string }> = {
-  idle: { dot: "bg-orange-900/50", badge: "secondary", label: "Idle" },
-  active: { dot: "bg-ember animate-pulse", badge: "success", label: "Active" },
-  busy: { dot: "bg-warm-gold animate-pulse", badge: "warning", label: "Busy" },
+  idle: { dot: "bg-zinc-500", badge: "secondary", label: "Idle" },
+  active: { dot: "bg-emerald-500 animate-pulse", badge: "success", label: "Active" },
+  busy: { dot: "bg-amber-500 animate-pulse", badge: "warning", label: "Busy" },
   error: { dot: "bg-red-500", badge: "error", label: "Error" },
 };
 
@@ -33,19 +33,19 @@ export function AgentCard({ agent, currentTask }: AgentCardProps) {
   const isStale = heartbeatAge > 1000 * 60 * 30; // >30min = stale
 
   return (
-    <div className="rounded-xl border border-orange-900/20 bg-[#1A1410]/80 hover:border-ember/30 transition-colors overflow-hidden">
+    <div className="rounded-xl border border-zinc-800 bg-zinc-950/80 hover:border-zinc-700 transition-colors overflow-hidden">
       {/* Header */}
-      <div className="flex items-center justify-between px-5 py-4 border-b border-orange-900/20">
+      <div className="flex items-center justify-between px-5 py-4 border-b border-zinc-800/60">
         <div className="flex items-center gap-3">
           <div className="relative">
             <span className="text-2xl">{agent.emoji}</span>
             <span
-              className={`absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full ${st.dot} ring-2 ring-[#1A1410]`}
+              className={`absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full ${st.dot} ring-2 ring-zinc-950`}
             />
           </div>
           <div>
-            <h3 className="text-sm font-semibold text-orange-50">{agent.name}</h3>
-            <p className={`text-xs ${isStale ? "text-orange-900/40" : "text-orange-200/40"}`}>
+            <h3 className="text-sm font-semibold text-zinc-100">{agent.name}</h3>
+            <p className={`text-xs ${isStale ? "text-zinc-600" : "text-zinc-500"}`}>
               {formatRelativeTime(agent.lastHeartbeat)}
             </p>
           </div>
@@ -61,10 +61,10 @@ export function AgentCard({ agent, currentTask }: AgentCardProps) {
         {currentTask ? (
           <div className="flex items-start gap-2">
             <span className="text-xs text-zinc-600 mt-0.5">📋</span>
-            <p className="text-xs text-orange-100/70 line-clamp-2 leading-relaxed">{currentTask.title}</p>
+            <p className="text-xs text-zinc-300 line-clamp-2 leading-relaxed">{currentTask.title}</p>
           </div>
         ) : (
-          <p className="text-xs text-orange-900/40 italic">No active task</p>
+          <p className="text-xs text-zinc-600 italic">No active task</p>
         )}
 
         {/* Model + Session */}
@@ -88,13 +88,13 @@ export function AgentCard({ agent, currentTask }: AgentCardProps) {
           {agent.capabilities.slice(0, 4).map((cap) => (
             <span
               key={cap}
-              className="text-[10px] px-1.5 py-0.5 rounded bg-orange-900/10 text-orange-200/40"
+              className="text-[10px] px-1.5 py-0.5 rounded bg-zinc-800/80 text-zinc-500"
             >
               {cap.replace(/_/g, " ")}
             </span>
           ))}
           {agent.capabilities.length > 4 && (
-            <span className="text-[10px] px-1.5 py-0.5 rounded bg-orange-900/10 text-orange-900/40">
+            <span className="text-[10px] px-1.5 py-0.5 rounded bg-zinc-800/80 text-zinc-600">
               +{agent.capabilities.length - 4}
             </span>
           )}

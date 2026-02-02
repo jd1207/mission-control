@@ -21,14 +21,14 @@ export function Sidebar({ onNavigate }: SidebarProps) {
   const pathname = usePathname();
 
   return (
-    <aside className="w-60 border-r border-orange-900/20 bg-[#1A1410] flex flex-col h-full">
+    <aside className="w-60 border-r border-zinc-800/60 bg-zinc-950 flex flex-col h-full">
       {/* Brand */}
-      <div className="px-6 py-6 border-b border-orange-900/20">
+      <div className="px-6 py-6 border-b border-zinc-800/60">
         <h1 className="text-xl font-bold tracking-tight">
-          <span className="text-ember">Mission</span>
-          <span className="text-warm-gold ml-1.5">Control</span>
+          <span className="text-emerald-400">Bag</span>
+          <span className="text-zinc-100">Bros</span>
         </h1>
-        <p className="text-[11px] text-orange-800/60 mt-0.5 tracking-wider uppercase">collaborative vibe coding</p>
+        <p className="text-[11px] text-zinc-600 mt-0.5 tracking-wider uppercase">Mission Control</p>
       </div>
 
       {/* Nav */}
@@ -43,8 +43,8 @@ export function Sidebar({ onNavigate }: SidebarProps) {
               className={cn(
                 "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
                 active
-                  ? "bg-ember/10 text-ember"
-                  : "text-orange-200/40 hover:bg-orange-900/10 hover:text-orange-100/80"
+                  ? "bg-emerald-500/10 text-emerald-400"
+                  : "text-zinc-500 hover:bg-zinc-800/50 hover:text-zinc-200"
               )}
             >
               <span className="text-base">{item.icon}</span>
@@ -55,8 +55,8 @@ export function Sidebar({ onNavigate }: SidebarProps) {
       </nav>
 
       {/* Footer */}
-      <div className="px-6 py-4 border-t border-orange-900/20">
-        <p className="text-[10px] text-orange-900/40">v2.0 • powered by OpenClaw</p>
+      <div className="px-6 py-4 border-t border-zinc-800/60">
+        <p className="text-[10px] text-zinc-700">v2.0 • powered by OpenClaw</p>
       </div>
     </aside>
   );

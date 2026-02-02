@@ -52,15 +52,6 @@ const config: Config = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        ember: {
-          DEFAULT: "#FF6B35",
-          glow: "#E55A2B",
-          deep: "#B84422",
-        },
-        "warm-gold": {
-          DEFAULT: "#FFAA4C",
-          light: "#FFCC80",
-        },
       },
       borderRadius: {
         lg: "var(--radius)",
