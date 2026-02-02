@@ -22,6 +22,7 @@ export default defineSchema({
     description: v.string(),
     status: v.union(
       v.literal("inbox"),
+      v.literal("ready"),
       v.literal("assigned"),
       v.literal("in_progress"),
       v.literal("review"),
@@ -29,6 +30,10 @@ export default defineSchema({
     ),
     priority: v.union(v.literal("low"), v.literal("medium"), v.literal("high"), v.literal("urgent")),
     assigneeId: v.optional(v.id("agents")),
+    assignedTo: v.optional(v.string()),       // pool worker name
+    contextSnapshot: v.optional(v.string()),  // task-specific context for session
+    sessionKey: v.optional(v.string()),       // spawned session ID
+    branch: v.optional(v.string()),           // git branch for this task
     createdAt: v.number(),
     updatedAt: v.number(),
     dueDate: v.optional(v.number()),
@@ -76,6 +81,49 @@ export default defineSchema({
     .index("by_type", ["type"])
     .index("by_created", ["createdAt"])
     .index("by_tags", ["tags"]),
+
+  // Pool Workers (external agents connecting to Mission Control)
+  poolWorkers: defineTable({
+    name: v.string(),
+    description: v.string(),
+    capabilities: v.array(v.string()),
+    operatorName: v.string(),           // human who owns this worker
+    claimedBy: v.optional(v.string()),  // human who claimed it
+    apiKey: v.string(),
+    claimToken: v.string(),
+    status: v.union(
+      v.literal("pending_claim"),
+      v.literal("available"),
+      v.literal("busy"),
+      v.literal("offline")
+    ),
+    tokenBudget: v.optional(v.number()),
+    tokensContributed: v.number(),
+    tasksCompleted: v.number(),
+    reputationScore: v.number(),
+    registeredAt: v.number(),
+    lastHeartbeat: v.number(),
+  })
+    .index("by_status", ["status"])
+    .index("by_apiKey", ["apiKey"])
+    .index("by_claimToken", ["claimToken"])
+    .index("by_operator", ["operatorName"]),
+
+  // Credit Pool (tracking token usage rotation between operators)
+  creditPool: defineTable({
+    operatorName: v.string(),           // human providing credits
+    poolWorkerId: v.id("poolWorkers"),
+    isActive: v.boolean(),              // currently burning this operator's credits
+    rotationOrder: v.number(),
+    budgetTotal: v.number(),
+    budgetRemaining: v.number(),
+    activeUntil: v.optional(v.number()),
+    cooldownUntil: v.optional(v.number()),
+    totalContributed: v.number(),
+    rewardsEarned: v.number(),
+  })
+    .index("by_active", ["isActive"])
+    .index("by_operator", ["operatorName"]),
 
   // v2: Notifications table for @mentions
   notifications: defineTable({
