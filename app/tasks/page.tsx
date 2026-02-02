@@ -38,6 +38,9 @@ export default function TasksPage() {
 
   const deleteTask = useMutation(api.tasks.deleteTask);
   const updateStatus = useMutation(api.tasks.updateStatus);
+  const createMessage = useMutation(api.messages.create);
+  const assignTask = useMutation(api.tasks.assign);
+  const [commentText, setCommentText] = useState("");
 
   const statuses = ["all", "inbox", "assigned", "in_progress", "review", "done"];
   const priorities = ["all", "low", "medium", "high", "urgent"];
@@ -292,13 +295,13 @@ export default function TasksPage() {
 
       {/* Task detail panel */}
       {selectedTask && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={() => setSelectedTask(null)}>
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={() => { setSelectedTask(null); setCommentText(""); }}>
           <Card className="w-full max-w-lg mx-4 max-h-[80vh] overflow-y-auto" onClick={(e: React.MouseEvent) => e.stopPropagation()}>
             <CardHeader>
               <CardTitle className="flex items-center justify-between">
                 <span className="text-lg">{selectedTask.title}</span>
                 {selectedTask.assignee && (
-                  <span className="text-xl">{selectedTask.assignee.emoji}</span>
+                  <span className="text-xl" title={selectedTask.assignee.name}>{selectedTask.assignee.emoji}</span>
                 )}
               </CardTitle>
               <div className="flex gap-2">
@@ -329,6 +332,49 @@ export default function TasksPage() {
                 </div>
               )}
 
+              {/* Quick actions */}
+              <div className="flex gap-2 flex-wrap">
+                <select
+                  value={selectedTask.status}
+                  onChange={async (e) => {
+                    try {
+                      await updateStatus({ id: selectedTask._id as any, status: e.target.value as any });
+                      setSelectedTask({ ...selectedTask, status: e.target.value });
+                    } catch (err) { console.error(err); }
+                  }}
+                  className="px-2 py-1 bg-zinc-800 border border-zinc-700 rounded text-zinc-100 text-xs"
+                >
+                  <option value="inbox">📥 Inbox</option>
+                  <option value="assigned">👤 Assigned</option>
+                  <option value="in_progress">⚡ In Progress</option>
+                  <option value="review">🔍 Review</option>
+                  <option value="done">✅ Done</option>
+                </select>
+                <select
+                  value={selectedTask.assigneeId || ""}
+                  onChange={async (e) => {
+                    try {
+                      const val = e.target.value || undefined;
+                      await assignTask({ id: selectedTask._id as any, assigneeId: val as any });
+                      const agent = agents?.find((a) => a._id === val);
+                      setSelectedTask({
+                        ...selectedTask,
+                        assigneeId: val,
+                        assignee: agent ? { id: agent._id, name: agent.name, emoji: agent.emoji } : null,
+                      });
+                    } catch (err) { console.error(err); }
+                  }}
+                  className="px-2 py-1 bg-zinc-800 border border-zinc-700 rounded text-zinc-100 text-xs"
+                >
+                  <option value="">Unassigned</option>
+                  {agents?.map((agent) => (
+                    <option key={agent._id} value={agent._id}>
+                      {agent.emoji} {agent.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
               {/* Messages */}
               <div>
                 <h4 className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2">Comments</h4>
@@ -351,11 +397,39 @@ export default function TasksPage() {
                   ))}
                   {messages?.length === 0 && <p className="text-xs text-zinc-600">No comments yet</p>}
                 </div>
+
+                {/* Add comment */}
+                <form
+                  className="mt-3 flex gap-2"
+                  onSubmit={async (e) => {
+                    e.preventDefault();
+                    if (!commentText.trim()) return;
+                    try {
+                      await createMessage({
+                        taskId: selectedTask._id as any,
+                        content: commentText.trim(),
+                        type: "text",
+                      });
+                      setCommentText("");
+                    } catch (err) { console.error(err); }
+                  }}
+                >
+                  <input
+                    type="text"
+                    value={commentText}
+                    onChange={(e) => setCommentText(e.target.value)}
+                    placeholder="Add a comment… (use @agent to mention)"
+                    className="flex-1 px-3 py-1.5 bg-zinc-800 border border-zinc-700 rounded-md text-zinc-100 text-xs placeholder:text-zinc-600 focus:outline-none focus:ring-1 focus:ring-emerald-500/50"
+                  />
+                  <Button type="submit" size="sm" className="text-xs h-7">
+                    Send
+                  </Button>
+                </form>
               </div>
 
               <div className="flex items-center justify-between pt-2">
                 <button
-                  onClick={() => setSelectedTask(null)}
+                  onClick={() => { setSelectedTask(null); setCommentText(""); }}
                   className="text-xs text-zinc-500 hover:text-zinc-300 transition-colors"
                 >
                   Close
