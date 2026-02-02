@@ -21,7 +21,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       {/* Mobile hamburger */}
       <button
         onClick={() => setSidebarOpen(!sidebarOpen)}
-        className="lg:hidden fixed top-4 left-4 z-50 p-2 bg-zinc-900 border border-zinc-800 rounded-lg"
+        className="lg:hidden fixed top-4 left-4 z-50 p-2 bg-[#1A1410] border border-orange-900/20 rounded-lg text-ember"
       >
         {sidebarOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
       </button>

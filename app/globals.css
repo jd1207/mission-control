@@ -4,26 +4,35 @@
 
 @layer base {
   :root {
-    --background: 240 10% 3.9%;
-    --foreground: 0 0% 98%;
-    --card: 240 10% 3.9%;
-    --card-foreground: 0 0% 98%;
-    --popover: 240 10% 3.9%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 142.1 76.2% 36.3%;
-    --primary-foreground: 355.7 100% 97.3%;
-    --secondary: 240 3.7% 15.9%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 240 3.7% 15.9%;
-    --muted-foreground: 240 5% 64.9%;
-    --accent: 240 3.7% 15.9%;
-    --accent-foreground: 0 0% 98%;
+    /* Mission Control — Ember Orange Theme */
+    /* Logo colors: #FF6B35 (Ember Orange), #FFAA4C (Warm Gold), #1A1410 (Warm Dark) */
+    --background: 24 24% 8.2%;
+    --foreground: 30 15% 92%;
+    --card: 24 18% 10%;
+    --card-foreground: 30 15% 92%;
+    --popover: 24 18% 10%;
+    --popover-foreground: 30 15% 92%;
+    --primary: 16 100% 60.4%;
+    --primary-foreground: 24 24% 8.2%;
+    --secondary: 24 12% 16%;
+    --secondary-foreground: 30 15% 92%;
+    --muted: 24 10% 14%;
+    --muted-foreground: 24 10% 55%;
+    --accent: 31.5 100% 64.9%;
+    --accent-foreground: 24 24% 8.2%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
-    --border: 240 3.7% 15.9%;
-    --input: 240 3.7% 15.9%;
-    --ring: 142.1 76.2% 36.3%;
+    --border: 24 12% 18%;
+    --input: 24 12% 16%;
+    --ring: 16 100% 60.4%;
     --radius: 0.5rem;
+
+    /* Extended brand palette */
+    --ember: 16 100% 60.4%;
+    --ember-glow: 16 100% 50%;
+    --warm-gold: 31.5 100% 64.9%;
+    --warm-white: 30 15% 92%;
+    --deep-ember: 16 80% 42%;
   }
 }
 
