@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "CONVEX_DEPLOYMENT=dev:famous-parakeet-451 NEXT_PUBLIC_CONVEX_URL=https://famous-parakeet-451.convex.cloud npx convex codegen && next build",
+    "build": "if [ -z \"$RAILWAY_ENVIRONMENT\" ]; then npx convex codegen && next build; else next build; fi",
     "start": "next start",
     "lint": "next lint"
   },
