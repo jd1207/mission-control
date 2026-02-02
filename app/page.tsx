@@ -29,7 +29,7 @@ export default function Dashboard() {
   const activeAgents = agents?.filter((a) => a.status === "active" || a.status === "busy").length ?? 0;
 
   return (
-    <div className="p-6 lg:p-8 space-y-8 max-w-[1600px] mx-auto">
+    <div className="p-4 pt-14 lg:pt-6 lg:p-8 space-y-6 lg:space-y-8 max-w-[1600px] mx-auto">
       {/* Dialogs */}
       <CreateTaskDialog isOpen={showCreateTask} onClose={() => setShowCreateTask(false)} />
       <CreateAgentDialog isOpen={showCreateAgent} onClose={() => setShowCreateAgent(false)} />
@@ -40,10 +40,10 @@ export default function Dashboard() {
       />
 
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-zinc-100 tracking-tight">Mission Control</h1>
-          <p className="text-sm text-zinc-500 mt-1">
+          <h1 className="text-xl sm:text-2xl font-bold text-zinc-100 tracking-tight">Mission Control</h1>
+          <p className="text-xs sm:text-sm text-zinc-500 mt-1">
             {activeAgents} agent{activeAgents !== 1 ? "s" : ""} active · {totalTasks} task{totalTasks !== 1 ? "s" : ""} tracked
           </p>
         </div>

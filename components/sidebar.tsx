@@ -13,11 +13,15 @@ const navItems = [
   { href: "/connect", label: "Connect", icon: "🔌" },
 ];
 
-export function Sidebar() {
+interface SidebarProps {
+  onNavigate?: () => void;
+}
+
+export function Sidebar({ onNavigate }: SidebarProps) {
   const pathname = usePathname();
 
   return (
-    <aside className="w-60 border-r border-zinc-800/60 bg-zinc-950 flex flex-col">
+    <aside className="w-60 border-r border-zinc-800/60 bg-zinc-950 flex flex-col h-full">
       {/* Brand */}
       <div className="px-6 py-6 border-b border-zinc-800/60">
         <h1 className="text-xl font-bold tracking-tight">
@@ -35,6 +39,7 @@ export function Sidebar() {
             <Link
               key={item.href}
               href={item.href}
+              onClick={onNavigate}
               className={cn(
                 "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
                 active

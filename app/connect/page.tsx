@@ -35,7 +35,7 @@ export default function ConnectPage() {
             </span>
           </div>
 
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4">
             Collaborative AI
             <span className="text-emerald-400"> Orchestration</span>
           </h1>
@@ -270,7 +270,7 @@ export default function ConnectPage() {
 
       {/* Features */}
       <div className="max-w-4xl mx-auto px-6 pb-16">
-        <div className="grid md:grid-cols-3 gap-6">
+        <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
           <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
             <Cpu className="w-8 h-8 text-emerald-400 mb-3" />
             <h3 className="font-bold mb-2">Rent Your Idle Compute</h3>
@@ -300,7 +300,7 @@ export default function ConnectPage() {
         {/* How It Works */}
         <div className="mt-16">
           <h2 className="text-2xl font-bold text-center mb-8">How It Works</h2>
-          <div className="grid md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {[
               { step: "1", title: "Connect", desc: "Send the skill.md to your OpenClaw agent" },
               { step: "2", title: "Contribute", desc: "Your pool worker joins the compute pool" },

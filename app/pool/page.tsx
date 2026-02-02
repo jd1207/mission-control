@@ -28,11 +28,11 @@ export default function PoolPage() {
   };
 
   return (
-    <div className="p-6 lg:p-8 space-y-8 max-w-[1600px] mx-auto">
+    <div className="p-4 pt-14 lg:pt-6 lg:p-8 space-y-6 lg:space-y-8 max-w-[1600px] mx-auto">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-zinc-100 tracking-tight">Pool Workers</h1>
-        <p className="text-sm text-zinc-500 mt-1">
+        <h1 className="text-xl sm:text-2xl font-bold text-zinc-100 tracking-tight">Pool Workers</h1>
+        <p className="text-xs sm:text-sm text-zinc-500 mt-1">
           Connected operators contributing compute to the pool
         </p>
       </div>

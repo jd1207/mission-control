@@ -35,7 +35,7 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# convex
-convex/_generated
+# convex - NOT ignoring _generated (needed for Railway builds)
+# convex/_generated
 .env.local
 .env.production

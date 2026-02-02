@@ -80,13 +80,13 @@ export function TaskBoard({ tasksByStatus, onTaskClick, onTaskDelete }: TaskBoar
   };
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
+    <div className="flex lg:grid lg:grid-cols-5 gap-4 overflow-x-auto pb-4 snap-x snap-mandatory lg:snap-none">
       {columns.map((col) => {
         const tasks = (tasksByStatus[col.key] as Task[] | undefined) ?? [];
         return (
           <div
             key={col.key}
-            className={`flex flex-col rounded-xl border border-zinc-800/80 ${col.accent} border-t-2 bg-zinc-950/50 min-h-[400px]`}
+            className={`flex flex-col rounded-xl border border-zinc-800/80 ${col.accent} border-t-2 bg-zinc-950/50 min-h-[300px] lg:min-h-[400px] min-w-[280px] lg:min-w-0 snap-center`}
             onDragOver={(e) => {
               e.preventDefault();
               e.currentTarget.classList.add("ring-1", "ring-zinc-600");
