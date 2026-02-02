@@ -24,6 +24,7 @@ interface Task {
 interface TaskBoardProps {
   tasksByStatus: Record<string, Task[]> | Record<string, unknown[]>;
   onTaskClick?: (task: Task) => void;
+  onTaskDelete?: (task: Task) => void;
 }
 
 const columns = [
@@ -64,7 +65,7 @@ const columns = [
   },
 ];
 
-export function TaskBoard({ tasksByStatus, onTaskClick }: TaskBoardProps) {
+export function TaskBoard({ tasksByStatus, onTaskClick, onTaskDelete }: TaskBoardProps) {
   const updateStatus = useMutation(api.tasks.updateStatus);
 
   const handleDrop = async (taskId: string, newStatus: string) => {
@@ -119,7 +120,7 @@ export function TaskBoard({ tasksByStatus, onTaskClick }: TaskBoardProps) {
                   onDragStart={(e) => e.dataTransfer.setData("text/plain", task._id)}
                   className="cursor-grab active:cursor-grabbing"
                 >
-                  <TaskCard task={task} onClick={onTaskClick} />
+                  <TaskCard task={task} onClick={onTaskClick} onDelete={onTaskDelete} />
                 </div>
               ))}
 

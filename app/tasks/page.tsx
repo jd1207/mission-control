@@ -1,13 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import { useQuery } from "convex/react";
+import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { TaskBoard } from "@/components/task-board";
 import { CreateTaskDialog } from "@/components/create-task-dialog";
+import { DeleteTaskDialog } from "@/components/delete-task-dialog";
+import { Trash2, CheckSquare, Square, ArrowRight } from "lucide-react";
 
 type ViewMode = "board" | "list";
 
@@ -18,6 +20,9 @@ export default function TasksPage() {
   const [assigneeFilter, setAssigneeFilter] = useState<string>("all");
   const [selectedTask, setSelectedTask] = useState<any>(null);
   const [showCreateDialog, setShowCreateDialog] = useState(false);
+  const [taskToDelete, setTaskToDelete] = useState<any>(null);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [bulkAction, setBulkAction] = useState(false);
 
   const agents = useQuery(api.agents.list);
   const tasksByStatus = useQuery(api.tasks.listByStatus);
@@ -31,8 +36,49 @@ export default function TasksPage() {
     selectedTask ? { taskId: selectedTask._id } : "skip"
   );
 
+  const deleteTask = useMutation(api.tasks.deleteTask);
+  const updateStatus = useMutation(api.tasks.updateStatus);
+
   const statuses = ["all", "inbox", "assigned", "in_progress", "review", "done"];
   const priorities = ["all", "low", "medium", "high", "urgent"];
+
+  const toggleSelect = (id: string) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
+  const selectAll = () => {
+    if (!tasks) return;
+    if (selectedIds.size === tasks.length) {
+      setSelectedIds(new Set());
+    } else {
+      setSelectedIds(new Set(tasks.map((t) => t._id)));
+    }
+  };
+
+  const handleBulkDelete = async () => {
+    if (selectedIds.size === 0) return;
+    const confirmed = window.confirm(`Delete ${selectedIds.size} task(s)? This cannot be undone.`);
+    if (!confirmed) return;
+    const ids = Array.from(selectedIds);
+    for (const id of ids) {
+      try { await deleteTask({ id: id as any }); } catch (e) { console.error(e); }
+    }
+    setSelectedIds(new Set());
+  };
+
+  const handleBulkStatusChange = async (status: string) => {
+    if (selectedIds.size === 0) return;
+    const ids = Array.from(selectedIds);
+    for (const id of ids) {
+      try { await updateStatus({ id: id as any, status: status as any }); } catch (e) { console.error(e); }
+    }
+    setSelectedIds(new Set());
+  };
 
   return (
     <div className="p-6 lg:p-8 space-y-6 max-w-[1600px] mx-auto">
@@ -67,7 +113,11 @@ export default function TasksPage() {
       {view === "board" ? (
         /* Kanban Board View */
         tasksByStatus ? (
-          <TaskBoard tasksByStatus={tasksByStatus} onTaskClick={setSelectedTask} />
+          <TaskBoard
+            tasksByStatus={tasksByStatus}
+            onTaskClick={setSelectedTask}
+            onTaskDelete={setTaskToDelete}
+          />
         ) : (
           <div className="flex items-center justify-center h-48 text-zinc-600">Loading…</div>
         )
@@ -77,7 +127,7 @@ export default function TasksPage() {
           {/* Filters */}
           <Card>
             <CardContent className="pt-4">
-              <div className="flex flex-wrap gap-4">
+              <div className="flex flex-wrap gap-4 items-end">
                 <div>
                   <label className="block text-[10px] font-medium text-zinc-500 uppercase tracking-wider mb-1">
                     Status
@@ -128,23 +178,79 @@ export default function TasksPage() {
                     ))}
                   </select>
                 </div>
+                <div className="ml-auto">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => { setBulkAction(!bulkAction); setSelectedIds(new Set()); }}
+                    className={bulkAction ? "border-emerald-500/50 text-emerald-400" : ""}
+                  >
+                    {bulkAction ? "Cancel Select" : "Bulk Actions"}
+                  </Button>
+                </div>
               </div>
             </CardContent>
           </Card>
 
+          {/* Bulk actions bar */}
+          {bulkAction && selectedIds.size > 0 && (
+            <div className="flex items-center gap-3 px-4 py-3 bg-zinc-800/80 border border-zinc-700 rounded-lg">
+              <span className="text-sm text-zinc-300 font-medium">{selectedIds.size} selected</span>
+              <div className="flex gap-2 ml-auto">
+                <select
+                  onChange={(e) => { if (e.target.value) handleBulkStatusChange(e.target.value); e.target.value = ""; }}
+                  className="px-3 py-1.5 bg-zinc-900 border border-zinc-700 rounded-md text-zinc-100 text-xs"
+                  defaultValue=""
+                >
+                  <option value="" disabled>Move to…</option>
+                  <option value="inbox">📥 Inbox</option>
+                  <option value="assigned">👤 Assigned</option>
+                  <option value="in_progress">⚡ In Progress</option>
+                  <option value="review">🔍 Review</option>
+                  <option value="done">✅ Done</option>
+                </select>
+                <Button variant="destructive" size="sm" onClick={handleBulkDelete}>
+                  <Trash2 className="h-3.5 w-3.5 mr-1" /> Delete
+                </Button>
+              </div>
+            </div>
+          )}
+
           {/* Task list table */}
           <Card>
             <CardHeader>
-              <CardDescription>{tasks?.length || 0} tasks</CardDescription>
+              <CardDescription className="flex items-center gap-2">
+                {bulkAction && (
+                  <button onClick={selectAll} className="text-zinc-500 hover:text-zinc-300">
+                    {tasks && selectedIds.size === tasks.length ? (
+                      <CheckSquare className="h-4 w-4" />
+                    ) : (
+                      <Square className="h-4 w-4" />
+                    )}
+                  </button>
+                )}
+                {tasks?.length || 0} tasks
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-1">
                 {tasks?.map((task) => (
                   <div
                     key={task._id}
-                    onClick={() => setSelectedTask(task)}
-                    className="flex items-center gap-4 px-4 py-3 rounded-lg hover:bg-zinc-800/50 cursor-pointer transition-colors"
+                    onClick={() => bulkAction ? toggleSelect(task._id) : setSelectedTask(task)}
+                    className={`flex items-center gap-4 px-4 py-3 rounded-lg hover:bg-zinc-800/50 cursor-pointer transition-colors ${
+                      selectedIds.has(task._id) ? "bg-emerald-500/5 border border-emerald-500/20" : ""
+                    }`}
                   >
+                    {bulkAction && (
+                      <span className="text-zinc-500">
+                        {selectedIds.has(task._id) ? (
+                          <CheckSquare className="h-4 w-4 text-emerald-400" />
+                        ) : (
+                          <Square className="h-4 w-4" />
+                        )}
+                      </span>
+                    )}
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium text-zinc-200 truncate">{task.title}</p>
                       <p className="text-xs text-zinc-500 truncate">{task.description}</p>
@@ -167,6 +273,14 @@ export default function TasksPage() {
                       <span className="text-base" title={task.assignee.name}>
                         {task.assignee.emoji}
                       </span>
+                    )}
+                    {!bulkAction && (
+                      <button
+                        onClick={(e) => { e.stopPropagation(); setTaskToDelete(task); }}
+                        className="opacity-0 group-hover:opacity-100 hover:text-red-400 text-zinc-600 transition-all"
+                      >
+                        <Trash2 className="h-3.5 w-3.5" />
+                      </button>
                     )}
                   </div>
                 ))}
@@ -239,18 +353,32 @@ export default function TasksPage() {
                 </div>
               </div>
 
-              <button
-                onClick={() => setSelectedTask(null)}
-                className="text-xs text-zinc-500 hover:text-zinc-300 transition-colors"
-              >
-                Close
-              </button>
+              <div className="flex items-center justify-between pt-2">
+                <button
+                  onClick={() => setSelectedTask(null)}
+                  className="text-xs text-zinc-500 hover:text-zinc-300 transition-colors"
+                >
+                  Close
+                </button>
+                <button
+                  onClick={() => { setTaskToDelete(selectedTask); setSelectedTask(null); }}
+                  className="text-xs text-red-500/70 hover:text-red-400 transition-colors flex items-center gap-1"
+                >
+                  <Trash2 className="h-3 w-3" /> Delete
+                </button>
+              </div>
             </CardContent>
           </Card>
         </div>
       )}
 
       <CreateTaskDialog isOpen={showCreateDialog} onClose={() => setShowCreateDialog(false)} />
+      <DeleteTaskDialog
+        task={taskToDelete}
+        open={!!taskToDelete}
+        onOpenChange={(open) => { if (!open) setTaskToDelete(null); }}
+        onDeleted={() => setTaskToDelete(null)}
+      />
     </div>
   );
 }

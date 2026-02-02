@@ -26,7 +26,7 @@ export function DeleteTaskDialog({ task, open, onOpenChange, onDeleted }: Delete
   const handleDelete = async () => {
     setIsDeleting(true);
     try {
-      await deleteTask({ taskId: task._id });
+      await deleteTask({ id: task._id as any });
       onDeleted?.();
       onOpenChange(false);
     } catch (error) {
@@ -37,58 +37,56 @@ export function DeleteTaskDialog({ task, open, onOpenChange, onDeleted }: Delete
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
-        <Card className="border-0 shadow-none">
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <CardTitle className="flex items-center gap-2">
-                <Trash2 className="h-5 w-5 text-red-500" />
-                Delete Task
-              </CardTitle>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => onOpenChange(false)}
-                className="h-8 w-8 p-0"
-              >
-                <X className="h-4 w-4" />
-              </Button>
-            </div>
-            <CardDescription>
-              Are you sure you want to delete "{task.title}"? This action cannot be undone.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-gray-600">
-              This will permanently delete the task and all associated comments and activities.
-            </p>
-          </CardContent>
-          <CardFooter className="flex justify-end gap-2">
+    <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
+      <Card className="max-w-md w-full mx-4 border-zinc-700 bg-zinc-900">
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <CardTitle className="flex items-center gap-2 text-zinc-100">
+              <Trash2 className="h-5 w-5 text-red-500" />
+              Delete Task
+            </CardTitle>
             <Button
-              variant="outline"
+              variant="ghost"
+              size="sm"
               onClick={() => onOpenChange(false)}
-              disabled={isDeleting}
+              className="h-8 w-8 p-0 text-zinc-500 hover:text-zinc-300"
             >
-              Cancel
+              <X className="h-4 w-4" />
             </Button>
-            <Button
-              variant="destructive"
-              onClick={handleDelete}
-              disabled={isDeleting}
-            >
-              {isDeleting ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Deleting...
-                </>
-              ) : (
-                "Delete Task"
-              )}
-            </Button>
-          </CardFooter>
-        </Card>
-      </div>
+          </div>
+          <CardDescription className="text-zinc-400">
+            Are you sure you want to delete &ldquo;{task.title}&rdquo;? This action cannot be undone.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <p className="text-sm text-zinc-500">
+            This will permanently delete the task and all associated comments and activities.
+          </p>
+        </CardContent>
+        <CardFooter className="flex justify-end gap-2">
+          <Button
+            variant="outline"
+            onClick={() => onOpenChange(false)}
+            disabled={isDeleting}
+          >
+            Cancel
+          </Button>
+          <Button
+            variant="destructive"
+            onClick={handleDelete}
+            disabled={isDeleting}
+          >
+            {isDeleting ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Deleting...
+              </>
+            ) : (
+              "Delete Task"
+            )}
+          </Button>
+        </CardFooter>
+      </Card>
     </div>
   );
 }
