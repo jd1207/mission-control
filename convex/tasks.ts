@@ -192,6 +192,60 @@ export const assign = mutation({
   },
 });
 
+// Delete task with cascade
+export const deleteTask = mutation({
+  args: {
+    id: v.id("tasks"),
+  },
+  handler: async (ctx, args) => {
+    const task = await ctx.db.get(args.id);
+    if (!task) throw new Error("Task not found");
+
+    // Delete associated messages
+    const messages = await ctx.db
+      .query("messages")
+      .filter((q) => q.eq(q.field("taskId"), args.id))
+      .collect();
+    
+    for (const message of messages) {
+      await ctx.db.delete(message._id);
+    }
+
+    // Delete associated activities
+    const activities = await ctx.db
+      .query("activities")
+      .filter((q) => q.eq(q.field("taskId"), args.id))
+      .collect();
+    
+    for (const activity of activities) {
+      await ctx.db.delete(activity._id);
+    }
+
+    // Delete associated notifications
+    const notifications = await ctx.db
+      .query("notifications")
+      .filter((q) => q.eq(q.field("taskId"), args.id))
+      .collect();
+    
+    for (const notification of notifications) {
+      await ctx.db.delete(notification._id);
+    }
+
+    // Delete the task itself
+    await ctx.db.delete(args.id);
+
+    // Log activity
+    await ctx.db.insert("activities", {
+      type: "task_deleted",
+      taskId: args.id,
+      message: `Task "${task.title}" deleted`,
+      timestamp: Date.now(),
+    });
+
+    return args.id;
+  },
+});
+
 // List tasks by status (for kanban board) — now with 5 columns
 export const listByStatus = query({
   args: {},

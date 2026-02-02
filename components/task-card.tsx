@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Trash2 } from "lucide-react";
 
 interface Task {
   _id: string;
@@ -24,6 +25,7 @@ interface Task {
 interface TaskCardProps {
   task: Task;
   onClick?: (task: Task) => void;
+  onDelete?: (task: Task) => void;
 }
 
 const priorityConfig: Record<string, { variant: string; dot: string }> = {
@@ -33,9 +35,10 @@ const priorityConfig: Record<string, { variant: string; dot: string }> = {
   low: { variant: "secondary", dot: "bg-zinc-500" },
 };
 
-export function TaskCard({ task, onClick }: TaskCardProps) {
+export function TaskCard({ task, onClick, onDelete }: TaskCardProps) {
   const [processing, setProcessing] = useState(false);
   const [processResult, setProcessResult] = useState<string | null>(null);
+  const [showDelete, setShowDelete] = useState(false);
   const prio = priorityConfig[task.priority] ?? priorityConfig.low;
 
   const formatDate = (timestamp: number) => {
@@ -75,11 +78,31 @@ export function TaskCard({ task, onClick }: TaskCardProps) {
     }
   };
 
+  const handleDelete = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onDelete?.(task);
+  };
+
   return (
     <div
-      className="group rounded-lg border border-zinc-800 bg-zinc-900/80 hover:border-zinc-700 hover:bg-zinc-900 transition-all duration-150 cursor-pointer"
+      className="group rounded-lg border border-zinc-800 bg-zinc-900/80 hover:border-zinc-700 hover:bg-zinc-900 transition-all duration-150 cursor-pointer relative"
       onClick={() => onClick?.(task)}
+      onMouseEnter={() => setShowDelete(true)}
+      onMouseLeave={() => setShowDelete(false)}
     >
+      {/* Delete button - appears on hover */}
+      {showDelete && (
+        <Button
+          size="icon"
+          variant="ghost"
+          className="absolute top-2 right-2 h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-500/10 hover:text-red-500"
+          onClick={handleDelete}
+          title="Delete task"
+        >
+          <Trash2 className="h-3.5 w-3.5" />
+        </Button>
+      )}
+
       <div className="p-3.5">
         {/* Header */}
         <div className="flex items-start justify-between gap-2 mb-2">
