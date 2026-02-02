@@ -2,13 +2,13 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { ConvexProvider } from "./providers";
-import { Sidebar } from "@/components/sidebar";
+import { AppShell } from "@/components/app-shell";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "BagBros Mission Control",
-  description: "Dashboard for managing BagBros agents and tasks",
+  description: "Collaborative AI orchestration — connect your agent, contribute compute, earn rewards.",
 };
 
 export default function RootLayout({
@@ -20,12 +20,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${inter.className} bg-zinc-900 text-zinc-100`}>
         <ConvexProvider>
-          <div className="flex h-screen">
-            <Sidebar />
-            <main className="flex-1 overflow-y-auto">
-              {children}
-            </main>
-          </div>
+          <AppShell>{children}</AppShell>
         </ConvexProvider>
       </body>
     </html>

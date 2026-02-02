@@ -7,8 +7,10 @@ import { cn } from "@/lib/utils";
 const navItems = [
   { href: "/", label: "Dashboard", icon: "📊" },
   { href: "/tasks", label: "Tasks", icon: "📋" },
-  { href: "/activity", label: "Activity", icon: "📈" },
   { href: "/agents", label: "Agents", icon: "🤖" },
+  { href: "/pool", label: "Pool Workers", icon: "⚡" },
+  { href: "/activity", label: "Activity", icon: "📈" },
+  { href: "/connect", label: "Connect", icon: "🔌" },
 ];
 
 export function Sidebar() {

@@ -26,6 +26,61 @@ export const getByName = query({
   },
 });
 
+// Create a new agent
+export const create = mutation({
+  args: {
+    name: v.string(),
+    emoji: v.string(),
+    capabilities: v.array(v.string()),
+  },
+  handler: async (ctx, args) => {
+    const agentId = await ctx.db.insert("agents", {
+      name: args.name,
+      emoji: args.emoji,
+      status: "idle",
+      lastHeartbeat: Date.now(),
+      capabilities: args.capabilities,
+    });
+
+    await ctx.db.insert("activities", {
+      type: "agent_created",
+      agentId,
+      message: `Agent "${args.emoji} ${args.name}" created`,
+      timestamp: Date.now(),
+    });
+
+    return agentId;
+  },
+});
+
+// Delete an agent
+export const deleteAgent = mutation({
+  args: { id: v.id("agents") },
+  handler: async (ctx, args) => {
+    const agent = await ctx.db.get(args.id);
+    if (!agent) throw new Error("Agent not found");
+
+    // Unassign tasks
+    const tasks = await ctx.db
+      .query("tasks")
+      .filter((q) => q.eq(q.field("assigneeId"), args.id))
+      .collect();
+    for (const task of tasks) {
+      await ctx.db.patch(task._id, { assigneeId: undefined, status: "inbox" });
+    }
+
+    await ctx.db.delete(args.id);
+
+    await ctx.db.insert("activities", {
+      type: "agent_deleted",
+      message: `Agent "${agent.emoji} ${agent.name}" removed`,
+      timestamp: Date.now(),
+    });
+
+    return args.id;
+  },
+});
+
 export const updateStatus = mutation({
   args: {
     id: v.id("agents"),

@@ -1,13 +1,23 @@
 "use client";
 
+import { useState } from "react";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { AgentCard } from "@/components/agent-card";
 import { TaskBoard } from "@/components/task-board";
 import { ActivityFeed } from "@/components/activity-feed";
+import { CreateTaskDialog } from "@/components/create-task-dialog";
+import { CreateAgentDialog } from "@/components/create-agent-dialog";
+import { DeleteTaskDialog } from "@/components/delete-task-dialog";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Plus } from "lucide-react";
 
 export default function Dashboard() {
+  const [showCreateTask, setShowCreateTask] = useState(false);
+  const [showCreateAgent, setShowCreateAgent] = useState(false);
+  const [deleteTask, setDeleteTask] = useState<{ _id: string; title: string } | null>(null);
+
   const agents = useQuery(api.agents.list);
   const tasksByStatus = useQuery(api.tasks.listByStatus);
   const activities = useQuery(api.activities.listRecent, { limit: 15 });
@@ -20,12 +30,40 @@ export default function Dashboard() {
 
   return (
     <div className="p-6 lg:p-8 space-y-8 max-w-[1600px] mx-auto">
+      {/* Dialogs */}
+      <CreateTaskDialog isOpen={showCreateTask} onClose={() => setShowCreateTask(false)} />
+      <CreateAgentDialog isOpen={showCreateAgent} onClose={() => setShowCreateAgent(false)} />
+      <DeleteTaskDialog
+        task={deleteTask}
+        open={!!deleteTask}
+        onOpenChange={(open) => !open && setDeleteTask(null)}
+      />
+
       {/* Header */}
-      <div>
-        <h1 className="text-2xl font-bold text-zinc-100 tracking-tight">Mission Control</h1>
-        <p className="text-sm text-zinc-500 mt-1">
-          {activeAgents} agent{activeAgents !== 1 ? "s" : ""} active · {totalTasks} task{totalTasks !== 1 ? "s" : ""} tracked
-        </p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-zinc-100 tracking-tight">Mission Control</h1>
+          <p className="text-sm text-zinc-500 mt-1">
+            {activeAgents} agent{activeAgents !== 1 ? "s" : ""} active · {totalTasks} task{totalTasks !== 1 ? "s" : ""} tracked
+          </p>
+        </div>
+        <div className="flex gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setShowCreateAgent(true)}
+            className="gap-1.5"
+          >
+            <Plus className="h-3.5 w-3.5" /> Agent
+          </Button>
+          <Button
+            size="sm"
+            onClick={() => setShowCreateTask(true)}
+            className="gap-1.5 bg-emerald-600 hover:bg-emerald-700"
+          >
+            <Plus className="h-3.5 w-3.5" /> Task
+          </Button>
+        </div>
       </div>
 
       {/* Agent Cards */}
@@ -51,7 +89,10 @@ export default function Dashboard() {
       <section>
         <h2 className="text-sm font-semibold text-zinc-400 uppercase tracking-wider mb-3">Task Board</h2>
         {tasksByStatus ? (
-          <TaskBoard tasksByStatus={tasksByStatus} />
+          <TaskBoard
+            tasksByStatus={tasksByStatus}
+            onTaskDelete={(task) => setDeleteTask(task)}
+          />
         ) : (
           <div className="flex items-center justify-center h-48 text-zinc-600">Loading tasks…</div>
         )}
