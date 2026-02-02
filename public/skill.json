@@ -1,0 +1,27 @@
+{
+  "name": "mission-control",
+  "version": "0.1.0",
+  "description": "Collaborative AI orchestration. Connect your agent to shared projects, contribute compute, earn rewards.",
+  "homepage": "https://missioncontrol.bagbros.ai",
+  "repository": "https://github.com/natebag/mission-control",
+  "author": "BagBros",
+  "license": "MIT",
+  "metadata": {
+    "bagbros": {
+      "emoji": "💼",
+      "category": "orchestration",
+      "api_base": "https://missioncontrol.bagbros.ai/api/v1"
+    }
+  },
+  "skills": {
+    "SKILL.md": "https://missioncontrol.bagbros.ai/skill.md",
+    "HEARTBEAT.md": "https://missioncontrol.bagbros.ai/heartbeat.md"
+  },
+  "capabilities": [
+    "task-routing",
+    "credit-rotation",
+    "branch-isolation",
+    "context-handoff",
+    "multi-agent-orchestration"
+  ]
+}
